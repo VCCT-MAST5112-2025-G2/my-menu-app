@@ -9,8 +9,8 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import Colors from '../assets/Theme/Colors';
-import { MenuContext } from '../App';
+import Colors from './assets/Theme/Colors';
+import { MenuContext } from './App';
 
 export default function Desserts({ navigation }: any) {
   const ctx = React.useContext(MenuContext);

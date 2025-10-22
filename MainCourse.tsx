@@ -9,19 +9,8 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import Colors from '../assets/Theme/Colors';
-import { MenuContext } from '../App';
-
-/**
- * Main course screen:
- * - Shows average price for mains
- * - Displays items for course "Mains"
- * - Shows optional image thumbnail if item.imageUri exists
- * - Simple remove flow with confirmation
- *
- * Note: MenuItem interface in App context should accept optional `imageUri?: string`
- * Example MenuItem: { id, name, description, course: 'Mains', price: 120, imageUri?: 'file://...' }
- */
+import Colors from './assets/Theme/Colors';
+import { MenuContext } from './App';
 
 export default function MainCourse({ navigation }: any) {
   const ctx = React.useContext(MenuContext);
@@ -33,13 +22,12 @@ export default function MainCourse({ navigation }: any) {
         <Text style={styles.emptyText}>Menu context not available.</Text>
       </View>
     );
-  }
+}
 
-  const items = ctx.getItemsByCourse('Mains');
-  const averages = ctx.getAveragePriceByCourse();
-  const avgMains = averages.Mains;
+const items = ctx.getItemsByCourse('Mains');
+const avgMains = items.length ? items.reduce((s: number, i: any) => s + i.price, 0) / items.length : 0;
 
-  const handleRemove = (id: string) => {
+const handleRemove = (id: string) => {
     Alert.alert('Remove item', 'Are you sure you want to remove this item?', [
       { text: 'Cancel', style: 'cancel' },
       {
