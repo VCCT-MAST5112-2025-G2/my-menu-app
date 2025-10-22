@@ -17,9 +17,6 @@ export interface MenuItem {
   imageUri?: string; // will hold image URI once I implement image picker
 }
 
-/* ------------------------
-  Context definition
-  ------------------------ */
 interface MenuContextValue {
   courses: Course[];
   menuItems: MenuItem[];
@@ -31,19 +28,10 @@ interface MenuContextValue {
 }
 
 export const MenuContext = React.createContext<MenuContextValue | undefined>(undefined);
-
-/* ------------------------
-  Helpers
-  ------------------------ */
 const genId = () => `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-
 const Stack = createNativeStackNavigator();
-
-/* ------------------------
-  App
-  ------------------------ */
 export default function App() {
-  // --- optional seed data (useful while building UI) ---
+  // optional seed data (useful while building UI) 
   const sampleData: MenuItem[] = [
    {
     id: genId(),
@@ -51,7 +39,6 @@ export default function App() {
     description: 'Tomato, basil, olive oil, sourdough',
     course: 'Starters',
     price: 55,
-    // imageUri: 'https://example.com/bruschetta.jpg', // optional placeholder
    },
    {
     id: genId(),
