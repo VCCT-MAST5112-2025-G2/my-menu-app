@@ -43,7 +43,7 @@ export default function Starters({ navigation }: any) {
     ]);
   };
 
-  // renderItem only renders the row. The modal is outside the FlatList.
+
   const renderItem = ({ item }: any) => (
     <View style={styles.item}>
       <TouchableOpacity
@@ -98,7 +98,7 @@ export default function Starters({ navigation }: any) {
         <Text style={styles.addText}>Add New Starter</Text>
       </TouchableOpacity>
 
-      {/* Modal for full-screen image preview */}
+    
       <Modal visible={!!selectedImage} transparent animationType="fade">
         <TouchableWithoutFeedback onPress={() => setSelectedImage(null)}>
           <View style={styles.modalBackdrop}>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
 
-  /* Modal styles */
+
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.9)',

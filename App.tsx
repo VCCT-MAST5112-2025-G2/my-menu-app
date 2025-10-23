@@ -1,6 +1,5 @@
-// App.tsx
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { Alert, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Colors from './assets/Theme/Colors';
@@ -51,9 +50,21 @@ export default function App() {
     setMenuItems(prev => [...prev, newItem]);
   };
 
-  const removeMenuItem = (id: string) => {
+  const removeMenuItem = (id: string) => 
     setMenuItems(prev => prev.filter(i => i.id !== id));
-  };
+  
+
+  const handleRemove = (id: string) => {
+  Alert.alert('Remove item', 'Are you sure you want to remove this item?', [
+    { text: 'Cancel', style: 'cancel' },
+    {
+      text: 'Remove',
+      style: 'destructive',
+      onPress: () => contextValue.removeMenuItem(id),
+    },
+  ]);
+};
+
 
   const getTotalItems = () => menuItems.length;
 

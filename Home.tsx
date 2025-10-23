@@ -1,4 +1,3 @@
-// screens/Home.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Colors from './assets/Theme/Colors';
@@ -14,7 +13,7 @@ export default function Home({ navigation }: HomeProps) {
   if (!ctx) {
     return (
       <View style={styles.container}>
-        <Text style={styles.heading}>Menu</Text>
+        <Text style={styles.heading}>Menu</Text> = "hello "
         <Text style={styles.emptyText}>Menu context not available.</Text>
       </View>
     );
