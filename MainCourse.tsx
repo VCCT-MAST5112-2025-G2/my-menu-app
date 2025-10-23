@@ -1,4 +1,3 @@
-// screens/MainCourse.tsx
 import React from 'react';
 import {
   View,

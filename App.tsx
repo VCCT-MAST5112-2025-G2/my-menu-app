@@ -5,16 +5,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Colors from './assets/Theme/Colors';
 import Starters from './starters'
 import MainCourse from './MainCourse';
-import Desserts from './Desserts'; 
-export type Course = 'Starters' | 'Mains' | 'Desserts';
+import Desserts from './Desserts';
+import AddItem from './AddItem';
 
+export type Course = 'Starters' | 'Mains' | 'Desserts';
 export interface MenuItem {
   id: string;
   name: string;
   description?: string;
   course: Course;
   price: number;
-  imageUri?: string; // will hold image URI once I implement image picker
+  imageUri?: string; // will hold image URI if I decide to add images later
 }
 
 interface MenuContextValue {
@@ -38,7 +39,7 @@ export default function App() {
     name: 'Bruschetta',
     description: 'Tomato, basil, olive oil, sourdough',
     course: 'Starters',
-    price: 55,
+    price:  55,
    },
    {
     id: genId(),
@@ -68,15 +69,12 @@ export default function App() {
    setMenuItems(prev => [...prev, newItem]);
   };
 
-  // Remove by id
+  // Working with removing by id
   const removeMenuItem = (id: string) => {
    setMenuItems(prev => prev.filter(i => i.id !== id));
   };
 
-  // Total items
   const getTotalItems = () => menuItems.length;
-
-  // Filter items by course
   const getItemsByCourse = (course: Course) => menuItems.filter(i => i.course === course);
 
   // Average price per course
@@ -100,7 +98,6 @@ export default function App() {
    return result;
   };
 
-  // Context value
   const contextValue: MenuContextValue = {
    courses,
    menuItems,

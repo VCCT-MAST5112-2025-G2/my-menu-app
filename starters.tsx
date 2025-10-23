@@ -15,6 +15,7 @@ import { MenuContext } from './App';
 export default function Starters({ navigation }: any) {
   const ctx = React.useContext(MenuContext);
 
+  //Using a guard so if the MenuContext isn't available, a safe fallback UI is shown
   if (!ctx) {
     return (
       <View style={styles.container}>
