@@ -1,7 +1,7 @@
 - Sage Eatery
 
-- Developed by: *[Your Name Here]*  
-- Student Number: *[Your Student Number Here]*
+- Developed by: Likamva Dzengwa
+- Student Number: ST10472125
 
 Sage Eatery is a modern, earthy-themed restaurant website that showcases a locally inspired menu with a strong focus on sustainability and community.  
 The platform allows users to browse through starters, main courses, and desserts — all curated by internationally renowned chef Christoffel, known for his refined approach to free-range produce and farm-to-table cooking.  
