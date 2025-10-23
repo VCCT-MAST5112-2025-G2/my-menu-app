@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Alert,
   Image,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Colors from './assets/Theme/Colors';
 import { MenuContext } from './App';
@@ -15,7 +17,7 @@ import { MenuContext } from './App';
 export default function Starters({ navigation }: any) {
   const ctx = React.useContext(MenuContext);
 
-  //Using a guard so if the MenuContext isn't available, a safe fallback UI is shown
+  // Guard: show safe fallback if context isn't available
   if (!ctx) {
     return (
       <View style={styles.container}>
@@ -24,9 +26,11 @@ export default function Starters({ navigation }: any) {
       </View>
     );
   }
+
   const items = ctx.getItemsByCourse('Starters');
   const averages = ctx.getAveragePriceByCourse();
   const avgStarters = averages.Starters;
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
 
   const handleRemove = (id: string) => {
     Alert.alert('Remove item', 'Are you sure you want to remove this starter?', [
@@ -39,9 +43,14 @@ export default function Starters({ navigation }: any) {
     ]);
   };
 
+  // renderItem only renders the row. The modal is outside the FlatList.
   const renderItem = ({ item }: any) => (
     <View style={styles.item}>
-      <View style={styles.thumbWrap}>
+      <TouchableOpacity
+        onPress={() => (item.imageUri ? setSelectedImage(item.imageUri) : null)}
+        style={styles.thumbWrap}
+        activeOpacity={0.8}
+      >
         {item.imageUri ? (
           <Image source={{ uri: item.imageUri }} style={styles.thumb} />
         ) : (
@@ -49,7 +58,7 @@ export default function Starters({ navigation }: any) {
             <Text style={styles.thumbText}>No image</Text>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.info}>
         <Text style={styles.itemName}>{item.name}</Text>
@@ -88,6 +97,17 @@ export default function Starters({ navigation }: any) {
       >
         <Text style={styles.addText}>Add New Starter</Text>
       </TouchableOpacity>
+
+      {/* Modal for full-screen image preview */}
+      <Modal visible={!!selectedImage} transparent animationType="fade">
+        <TouchableWithoutFeedback onPress={() => setSelectedImage(null)}>
+          <View style={styles.modalBackdrop}>
+            {selectedImage ? (
+              <Image source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />
+            ) : null}
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }
@@ -202,7 +222,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 24,
   },
+
+  /* Modal styles */
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullImage: {
+    width: '92%',
+    height: '72%',
+    borderRadius: 8,
+  },
 });
-
-
-

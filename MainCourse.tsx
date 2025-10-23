@@ -1,3 +1,4 @@
+// screens/MainCourse.tsx
 import React from 'react';
 import {
   View,
@@ -17,17 +18,18 @@ export default function MainCourse({ navigation }: any) {
   if (!ctx) {
     return (
       <View style={styles.container}>
-        <Text style={styles.heading}>Main Courses</Text>
+        <Text style={styles.heading}>Main Course</Text>
         <Text style={styles.emptyText}>Menu context not available.</Text>
       </View>
     );
-}
+  }
 
-const items = ctx.getItemsByCourse('Mains');
-const avgMains = items.length ? items.reduce((s: number, i: any) => s + i.price, 0) / items.length : 0;
+  const items = ctx.getItemsByCourse('Mains');
+  const averages = ctx.getAveragePriceByCourse();
+  const avgMains = averages.Mains;
 
-const handleRemove = (id: string) => {
-    Alert.alert('Remove item', 'Are you sure you want to remove this item?', [
+  const handleRemove = (id: string) => {
+    Alert.alert('Remove item', 'Are you sure you want to remove this main course?', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Remove',
@@ -37,36 +39,29 @@ const handleRemove = (id: string) => {
     ]);
   };
 
-  const renderItem = ({ item }: any) => {
-    return (
-      <View style={styles.item}>
-        {/* thumbnail / image area */}
-        <View style={styles.thumbWrap}>
-          {item.imageUri ? (
-            <Image source={{ uri: item.imageUri }} style={styles.thumb} />
-          ) : (
-            <View style={styles.thumbPlaceholder}>
-              <Text style={styles.thumbText}>No image</Text>
-            </View>
-          )}
-        </View>
-
-        {/* main info */}
-        <View style={styles.info}>
-          <Text style={styles.itemName}>{item.name}</Text>
-          {item.description ? (
-            <Text style={styles.itemDesc}>{item.description}</Text>
-          ) : null}
-          <Text style={styles.itemPrice}>R{Number(item.price).toFixed(2)}</Text>
-        </View>
-
-        {/* actions */}
-        <TouchableOpacity onPress={() => handleRemove(item.id)} style={styles.removeButton}>
-          <Text style={styles.removeText}>Remove</Text>
-        </TouchableOpacity>
+  const renderItem = ({ item }: any) => (
+    <View style={styles.item}>
+      <View style={styles.thumbWrap}>
+        {item.imageUri ? (
+          <Image source={{ uri: item.imageUri }} style={styles.thumb} />
+        ) : (
+          <View style={styles.thumbPlaceholder}>
+            <Text style={styles.thumbText}>No image</Text>
+          </View>
+        )}
       </View>
-    );
-  };
+
+      <View style={styles.info}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        {item.description ? <Text style={styles.itemDesc}>{item.description}</Text> : null}
+        <Text style={styles.itemPrice}>R{Number(item.price).toFixed(2)}</Text>
+      </View>
+
+      <TouchableOpacity onPress={() => handleRemove(item.id)} style={styles.removeButton}>
+        <Text style={styles.removeText}>Remove</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -82,14 +77,14 @@ const handleRemove = (id: string) => {
         style={styles.list}
         data={items}
         keyExtractor={(i) => i.id}
-        ListEmptyComponent={<Text style={styles.emptyText}>No main courses yet.</Text>}
         renderItem={renderItem}
+        ListEmptyComponent={<Text style={styles.emptyText}>No main courses yet.</Text>}
         contentContainerStyle={items.length === 0 ? { flex: 1 } : undefined}
       />
 
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddItem' /* create this later */)}
+        onPress={() => navigation.navigate('AddItem')}
       >
         <Text style={styles.addText}>Add New Main Course</Text>
       </TouchableOpacity>

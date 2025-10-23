@@ -10,11 +10,15 @@ import {
   Image,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Colors from './assets/Theme/Colors';
 import { MenuContext, Course } from './App';
 import { useNavigation } from '@react-navigation/native';
+
+
+
 
 export default function AddItem() {
   const ctx = React.useContext(MenuContext);
@@ -26,10 +30,11 @@ export default function AddItem() {
 
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
-  const [price, setPrice] = React.useState(''); // string to allow typing
-  const [course, setCourse] = React.useState<Course>(courses[0]); // default
+  const [price, setPrice] = React.useState(''); // keep as string while typing
+  const [course, setCourse] = React.useState<Course>(courses[0]);
   const [imageUri, setImageUri] = React.useState<string | undefined>(undefined);
   const [loadingPermission, setLoadingPermission] = React.useState(false);
+  const [loadingPick, setLoadingPick] = React.useState(false);
 
   // Request permission (for iOS & Android)
   const ensurePermission = async () => {
@@ -50,39 +55,58 @@ export default function AddItem() {
   };
 
   const pickImage = async () => {
+    // prevent concurrent calls
+    if (loadingPick) return;
+    setLoadingPick(true);
+
     const ok = await ensurePermission();
-    if (!ok) return;
+    if (!ok) {
+      setLoadingPick(false);
+      return;
+    }
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.7,        // compress a bit for smaller size
-        allowsEditing: true, // gives a square crop interface on many devices
+        quality: 0.7,
+        allowsEditing: true,
         aspect: [4, 3],
       });
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        // Use the first asset's uri
-        setImageUri(result.assets[0].uri);
+      /**
+       * result shapes vary by SDK:
+       * - Newer SDKs: { canceled: boolean, assets: [{ uri, ... }] }
+       * - Older SDKs: { cancelled: boolean, uri: '...' }
+       */
+      if ((result as any).canceled === false && (result as any).assets && (result as any).assets.length > 0) {
+        setImageUri((result as any).assets[0].uri);
+      } else if ((result as any).cancelled === false && (result as any).uri) {
+        setImageUri((result as any).uri);
+      } else {
+        // user cancelled - do nothing
       }
     } catch (err) {
       Alert.alert('Image error', 'Could not open image picker.');
+    } finally {
+      setLoadingPick(false);
     }
   };
 
   const handleAdd = () => {
-    //Validation and error handling in case the user doesnt enter the correct data
+    // Validation
     if (!name.trim()) {
       Alert.alert('Validation', 'Please enter a dish name.');
       return;
     }
-    const parsedPrice = parseFloat(price);
-    if (Number.isNaN(parsedPrice) || parsedPrice < 0) {
-      Alert.alert('Validation', 'Please enter a valid price (e.g. 120).');
+
+    const cleaned = price.trim();
+    const parsedPrice = parseFloat(cleaned);
+    if (cleaned === '' || Number.isNaN(parsedPrice) || parsedPrice < 0) {
+      Alert.alert('Validation', 'Please enter a valid price (e.g. 120.00).');
       return;
     }
 
-    // Building the item, addMenuItem will create id)
+    // Add item
     addMenuItem({
       name: name.trim(),
       description: description.trim() || undefined,
@@ -91,13 +115,18 @@ export default function AddItem() {
       imageUri,
     });
 
-    // clear and navigate back (or to Home)
+    // Clear & go back
     setName('');
     setDescription('');
     setPrice('');
     setImageUri(undefined);
 
-    navigation.goBack();
+    // Quick code to be able to navigate back
+    try {
+      (navigation as any).goBack();
+    } catch {
+      (navigation as any).navigate?.('Home');
+    }
   };
 
   return (
@@ -111,6 +140,7 @@ export default function AddItem() {
         placeholder="e.g. Grilled Salmon"
         style={styles.input}
         returnKeyType="done"
+        accessibilityLabel="Dish name"
       />
 
       <Text style={styles.label}>Description (optional)</Text>
@@ -121,6 +151,7 @@ export default function AddItem() {
         style={[styles.input, styles.multiline]}
         multiline
         numberOfLines={3}
+        accessibilityLabel="Description"
       />
 
       <Text style={styles.label}>Course</Text>
@@ -130,6 +161,7 @@ export default function AddItem() {
             key={c}
             style={[styles.courseButton, course === c && styles.courseButtonActive]}
             onPress={() => setCourse(c)}
+            accessibilityLabel={`Choose ${c}`}
           >
             <Text style={[styles.courseText, course === c && styles.courseTextActive]}>{c}</Text>
           </TouchableOpacity>
@@ -143,6 +175,7 @@ export default function AddItem() {
         placeholder="e.g. 120.00"
         style={styles.input}
         keyboardType={Platform.OS === 'ios' ? 'decimal-pad' : 'numeric'}
+        accessibilityLabel="Price"
       />
 
       <Text style={styles.label}>Image (optional)</Text>
@@ -157,14 +190,20 @@ export default function AddItem() {
         )}
 
         <View style={styles.imageButtons}>
-          <TouchableOpacity style={styles.smallButton} onPress={pickImage}>
-            <Text style={styles.smallButtonText}>Choose Photo</Text>
+          <TouchableOpacity
+            style={styles.smallButton}
+            onPress={pickImage}
+            accessibilityLabel="Choose photo"
+            disabled={loadingPick || loadingPermission}
+          >
+            {loadingPick ? <ActivityIndicator color={Colors.white} /> : <Text style={styles.smallButtonText}>Choose Photo</Text>}
           </TouchableOpacity>
 
           {imageUri ? (
             <TouchableOpacity
               style={[styles.smallButton, { backgroundColor: Colors.accent }]}
               onPress={() => setImageUri(undefined)}
+              accessibilityLabel="Remove chosen photo"
             >
               <Text style={styles.smallButtonText}>Remove</Text>
             </TouchableOpacity>
@@ -172,7 +211,12 @@ export default function AddItem() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+      <TouchableOpacity
+        style={[styles.addButton, (loadingPick || loadingPermission) && { opacity: 0.7 }]}
+        onPress={handleAdd}
+        accessibilityLabel="Add menu item"
+        disabled={loadingPick || loadingPermission}
+      >
         <Text style={styles.addButtonText}>Add Item</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -267,6 +311,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   smallButtonText: {
     color: Colors.white,

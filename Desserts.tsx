@@ -84,7 +84,7 @@ export default function Desserts({ navigation }: any) {
 
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddItem' /* or 'Home' if AddItem not created */)}
+        onPress={() => navigation.navigate('AddItem')}
       >
         <Text style={styles.addText}>Add New Dessert</Text>
       </TouchableOpacity>
