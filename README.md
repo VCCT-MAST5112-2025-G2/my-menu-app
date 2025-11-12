@@ -40,3 +40,15 @@ screenshots:<img width="1359" height="720" alt="Screenshot 2025-10-23 231609" sr
 <img width="1355" height="716" alt="Screenshot 2025-10-23 231629" src="https://github.com/user-attachments/assets/11d4a70b-dc2e-4c60-8017-45a88a702879" />
 <img width="1343" height="716" alt="Screenshot 2025-10-23 231530" src="https://github.com/user-attachments/assets/58e301fa-fe0f-4550-babe-8745239246e4" />
 
+- CHANGELOG
+  - Added inline “Add Item” form directly on the Home page (per lecturer feedback).
+  - Displayed average prices per course (Starters, Mains, Desserts) at the top of the Home page.
+  - Fixed navigation bug between Home and course pages.
+  - Improved app structure using multiple files and MenuContext for cleaner state management.
+  - mplemented filter-by-course navigation (Starters, Mains, Desserts pages).
+    Updated Home page screenshots:
+    <img width="1365" height="711" alt="Screenshot 2025-11-12 151504" src="https://github.com/user-attachments/assets/6517bf12-69cf-4e74-9cb5-cedadf3275a2" />
+    <img width="1365" height="635" alt="Screenshot 2025-11-12 143940" src="https://github.com/user-attachments/assets/efb40566-f955-4f1a-9898-f299ead8e96b" />
+
+    
+
