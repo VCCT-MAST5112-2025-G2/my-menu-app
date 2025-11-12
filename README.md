@@ -48,7 +48,8 @@ screenshots:<img width="1359" height="720" alt="Screenshot 2025-10-23 231609" sr
   - mplemented filter-by-course navigation (Starters, Mains, Desserts pages).
     Updated Home page screenshots:
     <img width="1365" height="711" alt="Screenshot 2025-11-12 151504" src="https://github.com/user-attachments/assets/6517bf12-69cf-4e74-9cb5-cedadf3275a2" />
-    <img width="1365" height="635" alt="Screenshot 2025-11-12 143940" src="https://github.com/user-attachments/assets/efb40566-f955-4f1a-9898-f299ead8e96b" />
+    <img width="1365" height="620" alt="Screenshot 2025-11-12 151516" src="https://github.com/user-attachments/assets/ee4f632b-a82b-4597-80eb-8ff9a28d6606" />
+  
 
     
 
