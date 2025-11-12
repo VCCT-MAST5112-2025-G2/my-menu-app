@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TextInput,
   Alert,
+  ScrollView,
 } from 'react-native';
 import Colors from './assets/Theme/Colors';
 import { MenuContext, Course } from './App';
@@ -17,7 +18,10 @@ interface HomeProps {
 export default function Home({ navigation }: HomeProps) {
   const ctx = React.useContext(MenuContext);
 
-  // InlineAdd component lives inside Home.tsx for simplicity
+  // Helper to translate course name to route name in navigator
+  const routeForCourse = (c: Course) => (c === 'Mains' ? 'MainCourse' : c);
+
+  // InlineAdd component placed inside Home for simplicity
   function InlineAdd() {
     if (!ctx) return null;
     const { courses, addMenuItem } = ctx;
@@ -114,48 +118,63 @@ export default function Home({ navigation }: HomeProps) {
   const averages = ctx.getAveragePriceByCourse();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Menu</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <Text style={styles.heading}>Menu</Text>
 
-      <Text style={styles.sub}>Total items: {ctx.getTotalItems()}</Text>
+        <Text style={styles.sub}>Total items: {ctx.getTotalItems()}</Text>
 
-      {/* Average prices per course */}
-      <View style={styles.averagesRow}>
-        {courses.map((c) => (
-          <View key={c} style={styles.avgCard}>
-            <Text style={styles.avgCourse}>{c}</Text>
-            <Text style={styles.avgValue}>R{averages[c].toFixed(2)}</Text>
-          </View>
-        ))}
-      </View>
+        {/* Average prices per course */}
+        <View style={styles.averagesRow}>
+          {courses.map((c) => (
+            <View key={c} style={styles.avgCard}>
+              <Text style={styles.avgCourse}>{c}</Text>
+              <Text style={styles.avgValue}>R{averages[c].toFixed(2)}</Text>
+            </View>
+          ))}
+        </View>
 
-      {/* Inline add form (placed on homepage to satisfy Part 2 requirement) */}
-      <InlineAdd />
+        {/* Inline add form */}
+        <InlineAdd />
 
-      {/* Navigation buttons to course pages */}
-      {courses.map((course) => (
+        {/* Divider */}
+        <View style={styles.divider} />
+
+        <Text style={styles.sectionTitle}>View Menu Sections</Text>
+
+        {/* Course navigation - side-by-side on wide screens, stacked on small */}
+        <View style={styles.courseButtonsRow}>
+          {courses.map((course) => (
+            <TouchableOpacity
+              key={course}
+              style={styles.courseNavBtn}
+              onPress={() => navigation.navigate(routeForCourse(course))}
+            >
+              <Text style={styles.courseNavText}>{course}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Full add item page */}
         <TouchableOpacity
-          key={course}
-          style={styles.button}
-          onPress={() =>
-            navigation.navigate(course === 'Mains' ? 'MainCourse' : course)
-          }
+          style={[styles.addButton, { marginTop: 16 }]}
+          onPress={() => navigation.navigate('AddItem')}
         >
-          <Text style={styles.buttonText}>{course}</Text>
+          <Text style={styles.addText}>Open Full Add Item Page</Text>
         </TouchableOpacity>
-      ))}
-
-      {/* Keep separate AddItem screen available */}
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddItem')}>
-        <Text style={styles.addText}>Add New Menu Item (Full Form)</Text>
-      </TouchableOpacity>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    backgroundColor: Colors.background,
+  },
   container: {
     flex: 1,
+    padding: 16,
     backgroundColor: Colors.background,
   },
   heading: {
@@ -248,30 +267,46 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // navigation buttons
-  button: {
-    backgroundColor: Colors.button,
-    paddingVertical: 14,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginBottom: 12,
+  // divider & section
+  divider: {
+    height: 1,
+    backgroundColor: '#d8d8d8',
+    marginVertical: 16,
   },
-  buttonText: {
-    color: Colors.white,
+  sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    textAlign: 'center',
+    marginBottom: 8,
   },
+
+  // course navigation - responsive friendly
+  courseButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // no `gap` here (not supported in RN)
+  },
+  courseNavBtn: {
+    flex: 1,
+    marginHorizontal: 6,
+    backgroundColor: Colors.primary,
+    paddingVertical: 12,
+    borderRadius: 24,
+    alignItems: 'center',
+  },
+  courseNavText: {
+    color: Colors.white,
+    fontWeight: '700',
+  },
+
+  // full add button
   addButton: {
     marginTop: 8,
     backgroundColor: Colors.accent,
     paddingVertical: 14,
     borderRadius: 25,
     alignItems: 'center',
-  },
-  AddText: {
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: '700',
   },
   emptyText: {
     textAlign: 'center',
